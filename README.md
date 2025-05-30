@@ -25,6 +25,20 @@ structured subfolders.
 
 ## 📦 Installation
 
+### File Structure
+
+```bash
+file-organizer/
+├── file_organizer.py          # Main script
+├── test_file_organizer.py     # Unit tests
+├── file_types_config.py       # Optional: file type mappings
+├── README.md                  # Documentation
+├── .gitignore                 # Git config
+└── examples/                  # Sample inputs or config (optional)
+```
+
+### Setup
+
 Clone the repository:
 
 ```bash
