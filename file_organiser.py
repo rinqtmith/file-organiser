@@ -1,13 +1,18 @@
+import argparse
 import os
 import shutil
 
 from file_types_config import FILE_TYPES
 
-# use hard coded path for testing purposes
-PATH = "../example_folder"
-
 
 def main():
+    parser = argparse.ArgumentParser(description="Organise files in a directory")
+    parser.add_argument(
+        "path", help="Path to the directory to organise files in", type=str
+    )
+    args = parser.parse_args()
+    PATH = args.path
+
     for filename in os.listdir(PATH):
         filename_path = os.path.join(PATH, filename)
         if os.path.isfile(filename_path):
