@@ -1,4 +1,4 @@
-# 📂 File Organizer Utility
+# 📂 File Organiser Utility
 
 A command-line Python script that automatically organizes files in a given directory
 by file type, creation date, or custom logic. This tool helps de-clutter downloads
@@ -28,9 +28,9 @@ structured subfolders.
 ### File Structure
 
 ```bash
-file-organizer/
-├── file_organizer.py          # Main script
-├── test_file_organizer.py     # Unit tests
+file-organiser/
+├── file_organiser.py          # Main script
+├── test_file_organiser.py     # Unit tests
 ├── file_types_config.py       # Optional: file type mappings
 ├── README.md                  # Documentation
 ├── .gitignore                 # Git config
@@ -42,8 +42,8 @@ file-organizer/
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/file-organizer.git
-cd file-organizer
+git clone https://github.com/yourusername/file-organiser.git
+cd file-organiser
 ```
 
 Install dependencies (only standard libraries used; no installation required).
@@ -53,7 +53,7 @@ Install dependencies (only standard libraries used; no installation required).
 Basic usage:
 
 ```bash
-python3 file_organizer.py --path /path/to/target/directory
+python3 file_organiser.py --path /path/to/target/directory
 ```
 
 ### Optional arguments
@@ -69,7 +69,7 @@ python3 file_organizer.py --path /path/to/target/directory
 ### Example
 
 ```bash
-python file_organizer.py --path ~/Downloads --by-date --verbose
+python file_organiser.py --path ~/Downloads --by-date --verbose
 ```
 
 ## 📂 Folder Mapping Logic
