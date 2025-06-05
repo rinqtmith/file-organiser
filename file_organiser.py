@@ -38,26 +38,24 @@ def main():
 
     file_list = list(PATH.iterdir())
 
-    for filename in os.listdir(PATH):
-        filename_path = PATH.joinpath(filename)
-        if os.path.isfile(filename_path):
-            _, ext = os.path.splitext(filename)
+    for filename in file_list:
+        if filename.is_file():
             for file_type in FILE_TYPES:
-                if ext.lower() in FILE_TYPES[file_type]:
-                    folder_path = os.path.join(PATH, file_type)
+                if filename.suffix.lower() in FILE_TYPES[file_type]:
+                    folder_path = PATH.joinpath(file_type)
                     try:
                         os.mkdir(folder_path)
                     except FileExistsError:
                         pass
-                    shutil.move(filename_path, folder_path)
+                    shutil.move(filename, folder_path.joinpath(filename.name))
                     break
             else:
-                other_path = os.path.join(PATH, "Other")
+                other_path = PATH.joinpath("Other")
                 try:
                     os.mkdir(other_path)
                 except FileExistsError:
                     pass
-                shutil.move(filename_path, other_path)
+                shutil.move(filename, other_path.joinpath(filename.name))
 
 
 if __name__ == "__main__":
