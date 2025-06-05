@@ -1,24 +1,33 @@
 import os
+import shutil
 
-from pathlib import Path
+from file_types_config import FILE_TYPES
 
 # use hard coded path for testing purposes
-PATH = Path("/Users/fatihavci/dev/boot-dev/portfolio/example_folder")
+PATH = "../example_folder"
 
 
 def main():
-    # get files and directories in the current directory
-    folders = []
-    files = []
     for filename in os.listdir(PATH):
-        # print folders and files separately
-        if os.path.isdir(os.path.join(PATH, filename)):
-            folders.append(filename)
-        if os.path.isfile(os.path.join(PATH, filename)):
-            files.append(filename)
-        # separate files according to their extensions
-    print(f"Folders: {folders}")
-    print(f"Files: {files}")
+        filename_path = os.path.join(PATH, filename)
+        if os.path.isfile(filename_path):
+            _, ext = os.path.splitext(filename)
+            for file_type in FILE_TYPES:
+                if ext.lower() in FILE_TYPES[file_type]:
+                    folder_path = os.path.join(PATH, file_type)
+                    try:
+                        os.mkdir(folder_path)
+                    except FileExistsError:
+                        pass
+                    shutil.move(filename_path, folder_path)
+                    break
+            else:
+                other_path = os.path.join(PATH, "Other")
+                try:
+                    os.mkdir(other_path)
+                except FileExistsError:
+                    pass
+                shutil.move(filename_path, other_path)
 
 
 if __name__ == "__main__":

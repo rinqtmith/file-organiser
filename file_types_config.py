@@ -6,5 +6,4 @@ FILE_TYPES = {
     "Videos": [".mp4", ".mov"],
     "Audio": [".mp3", ".wav"],
     "Executables": [".exe", ".sh", ".bat"],
-    "Others": [],
 }
