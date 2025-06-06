@@ -12,6 +12,11 @@ def main():
     parser.add_argument(
         "path", help="Path to the directory to organise files in", type=str
     )
+    parser.add_argument(
+        "--dry-run",
+        help="Perform a dry run without making changes",
+        action="store_true",
+    )
     args = parser.parse_args()
     PATH = Path(args.path).resolve()
     cwd = Path.cwd()
@@ -43,19 +48,29 @@ def main():
             for file_type in FILE_TYPES:
                 if filename.suffix.lower() in FILE_TYPES[file_type]:
                     folder_path = PATH.joinpath(file_type)
-                    try:
-                        os.mkdir(folder_path)
-                    except FileExistsError:
-                        pass
-                    shutil.move(filename, folder_path.joinpath(filename.name))
+                    if args.dry_run:
+                        print(
+                            f"[Dry Run] Would move {filename.name} to {folder_path.name} folder."
+                        )
+                    else:
+                        try:
+                            os.mkdir(folder_path)
+                        except FileExistsError:
+                            pass
+                        shutil.move(filename, folder_path.joinpath(filename.name))
                     break
             else:
-                other_path = PATH.joinpath("Other")
-                try:
-                    os.mkdir(other_path)
-                except FileExistsError:
-                    pass
-                shutil.move(filename, other_path.joinpath(filename.name))
+                other_path = PATH.joinpath("Others")
+                if args.dry_run:
+                    print(
+                        f"[Dry Run] Would move {filename.name} to {other_path.name} folder."
+                    )
+                else:
+                    try:
+                        os.mkdir(other_path)
+                    except FileExistsError:
+                        pass
+                    shutil.move(filename, other_path.joinpath(filename.name))
 
 
 if __name__ == "__main__":
