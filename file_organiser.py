@@ -66,10 +66,10 @@ def main():
                         )
                     else:
                         try:
-                            os.mkdir(folder_path)
+                            os.makedirs(folder_date_path)
                         except FileExistsError:
                             pass
-                        shutil.move(filename, folder_path.joinpath(filename.name))
+                        shutil.move(filename, folder_date_path.joinpath(filename.name))
                     break
             else:
                 other_path = PATH.joinpath("Others")
@@ -86,10 +86,10 @@ def main():
                     )
                 else:
                     try:
-                        os.mkdir(other_path)
+                        os.makedirs(other_date_path)
                     except FileExistsError:
                         pass
-                    shutil.move(filename, other_path.joinpath(filename.name))
+                    shutil.move(filename, other_date_path.joinpath(filename.name))
 
 
 if __name__ == "__main__":
