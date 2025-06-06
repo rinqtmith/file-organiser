@@ -8,6 +8,48 @@ from datetime import datetime
 from file_types_config import FILE_TYPES
 
 
+def move_file_to_folder(filename, file_path, dry_run, by_date):
+    file_date = datetime.fromtimestamp(filename.stat().st_birthtime).date().isoformat()
+    for file_type in FILE_TYPES:
+        if filename.suffix.lower() in FILE_TYPES[file_type]:
+            folder_path = file_path.joinpath(file_type)
+            folder_date_path = (
+                folder_path.joinpath(file_date) if by_date else folder_path
+            )
+            if dry_run:
+                print(
+                    f"[Dry Run] Would move {filename.name} to {
+                        folder_path.name + os.sep + folder_date_path.name
+                        if by_date
+                        else folder_path.name
+                    } folder."
+                )
+            else:
+                try:
+                    os.makedirs(folder_date_path)
+                except FileExistsError:
+                    pass
+                shutil.move(filename, folder_date_path.joinpath(filename.name))
+            break
+    else:
+        other_path = file_path.joinpath("Others")
+        other_date_path = other_path.joinpath(file_date) if by_date else other_path
+        if dry_run:
+            print(
+                f"[Dry Run] Would move {filename.name} to {
+                    other_path.name + os.sep + other_date_path.name
+                    if by_date
+                    else other_path.name
+                } folder."
+            )
+        else:
+            try:
+                os.makedirs(other_date_path)
+            except FileExistsError:
+                pass
+            shutil.move(filename, other_date_path.joinpath(filename.name))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Organise files in a directory")
     parser.add_argument(
@@ -52,49 +94,9 @@ def main():
 
     for filename in file_list:
         if filename.is_file():
-            file_date = (
-                datetime.fromtimestamp(filename.stat().st_birthtime).date().isoformat()
-            )
-            for file_type in FILE_TYPES:
-                if filename.suffix.lower() in FILE_TYPES[file_type]:
-                    folder_path = PATH.joinpath(file_type)
-                    folder_date_path = (
-                        folder_path.joinpath(file_date) if args.by_date else folder_path
-                    )
-                    if args.dry_run:
-                        print(
-                            f"[Dry Run] Would move {filename.name} to {
-                                folder_path.name + os.sep + folder_date_path.name
-                                if args.by_date
-                                else folder_path.name
-                            } folder."
-                        )
-                    else:
-                        try:
-                            os.makedirs(folder_date_path)
-                        except FileExistsError:
-                            pass
-                        shutil.move(filename, folder_date_path.joinpath(filename.name))
-                    break
-            else:
-                other_path = PATH.joinpath("Others")
-                other_date_path = (
-                    other_path.joinpath(file_date) if args.by_date else other_path
-                )
-                if args.dry_run:
-                    print(
-                        f"[Dry Run] Would move {filename.name} to {
-                            other_path.name + os.sep + other_date_path.name
-                            if args.by_date
-                            else other_path.name
-                        } folder."
-                    )
-                else:
-                    try:
-                        os.makedirs(other_date_path)
-                    except FileExistsError:
-                        pass
-                    shutil.move(filename, other_date_path.joinpath(filename.name))
+            move_file_to_folder(filename, PATH, args.dry_run, args.by_date)
+        else:
+            print(f"Skipping {filename.name} as it is not a file.")
 
 
 if __name__ == "__main__":
