@@ -21,6 +21,9 @@ def main():
     parser.add_argument(
         "-b", "--by-date", help="Organise files by date", action="store_true"
     )
+    parser.add_argument(
+        "-r", "--recursive", help="Organise files recursively", action="store_true"
+    )
     args = parser.parse_args()
     PATH = Path(args.path).resolve()
     cwd = Path.cwd()
