@@ -18,7 +18,9 @@ def main():
         help="Perform a dry run without making changes",
         action="store_true",
     )
-    parser.add_argument("--by-date", help="Organise files by date", action="store_true")
+    parser.add_argument(
+        "-b", "--by-date", help="Organise files by date", action="store_true"
+    )
     args = parser.parse_args()
     PATH = Path(args.path).resolve()
     cwd = Path.cwd()
