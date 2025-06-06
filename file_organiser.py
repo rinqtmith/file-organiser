@@ -50,14 +50,14 @@ def move_file_to_folder(filename, file_path, dry_run, by_date):
             shutil.move(filename, other_date_path.joinpath(filename.name))
 
 
-def check_files(file_path, dry_run, by_date):
+def check_files(file_path, dry_run, by_date, recursive):
     for file_to_check in file_path.iterdir():
         if file_to_check.is_file():
             move_file_to_folder(file_to_check, file_path, dry_run, by_date)
-        elif file_to_check.is_dir():
-            check_files(file_to_check, dry_run, by_date)
+        elif file_to_check.is_dir() and recursive:
+            check_files(file_to_check, dry_run, by_date, recursive)
         else:
-            print(f"Skipping {file_to_check.name} as it is not a file or directory.")
+            print(f"Skipping {file_to_check.name} as recursive is not set.")
 
 
 def main():
@@ -75,6 +75,12 @@ def main():
     )
     parser.add_argument(
         "-r", "--recursive", help="Organise files recursively", action="store_true"
+    )
+    parser.add_argument(
+        "-a",
+        "--recursive-all",
+        help="Organise all files recursively",
+        action="store_true",
     )
     args = parser.parse_args()
     PATH = Path(args.path).resolve()
@@ -100,7 +106,7 @@ def main():
         )
         return
 
-    check_files(PATH, args.dry_run, args.by_date)
+    check_files(PATH, args.dry_run, args.by_date, args.recursive)
 
 
 if __name__ == "__main__":
