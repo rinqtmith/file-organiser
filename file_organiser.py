@@ -50,6 +50,16 @@ def move_file_to_folder(filename, file_path, dry_run, by_date):
             shutil.move(filename, other_date_path.joinpath(filename.name))
 
 
+def check_files(file_path, dry_run, by_date):
+    for file_to_check in file_path.iterdir():
+        if file_to_check.is_file():
+            move_file_to_folder(file_to_check, file_path, dry_run, by_date)
+        elif file_to_check.is_dir():
+            check_files(file_to_check, dry_run, by_date)
+        else:
+            print(f"Skipping {file_to_check.name} as it is not a file or directory.")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Organise files in a directory")
     parser.add_argument(
@@ -90,15 +100,7 @@ def main():
         )
         return
 
-    for file_to_check in PATH.iterdir():
-        if file_to_check.is_file():
-            move_file_to_folder(file_to_check, PATH, args.dry_run, args.by_date)
-        elif file_to_check.is_dir():
-            for item in file_to_check.iterdir():
-                if item.is_file():
-                    move_file_to_folder(item, file_to_check, args.dry_run, args.by_date)
-        else:
-            print(f"Skipping {file_to_check.name} as it is not a file or directory.")
+    check_files(PATH, args.dry_run, args.by_date)
 
 
 if __name__ == "__main__":
