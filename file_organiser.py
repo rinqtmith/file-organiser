@@ -3,6 +3,7 @@ import os
 import shutil
 
 from pathlib import Path
+from datetime import datetime
 
 from file_types_config import FILE_TYPES
 
@@ -17,6 +18,7 @@ def main():
         help="Perform a dry run without making changes",
         action="store_true",
     )
+    parser.add_argument("--by-date", help="Organise files by date", action="store_true")
     args = parser.parse_args()
     PATH = Path(args.path).resolve()
     cwd = Path.cwd()
@@ -45,12 +47,22 @@ def main():
 
     for filename in file_list:
         if filename.is_file():
+            file_date = (
+                datetime.fromtimestamp(filename.stat().st_birthtime).date().isoformat()
+            )
             for file_type in FILE_TYPES:
                 if filename.suffix.lower() in FILE_TYPES[file_type]:
                     folder_path = PATH.joinpath(file_type)
+                    folder_date_path = (
+                        folder_path.joinpath(file_date) if args.by_date else folder_path
+                    )
                     if args.dry_run:
                         print(
-                            f"[Dry Run] Would move {filename.name} to {folder_path.name} folder."
+                            f"[Dry Run] Would move {filename.name} to {
+                                folder_path.name + os.sep + folder_date_path.name
+                                if args.by_date
+                                else folder_path.name
+                            } folder."
                         )
                     else:
                         try:
@@ -61,9 +73,14 @@ def main():
                     break
             else:
                 other_path = PATH.joinpath("Others")
+                other_date_path = (
+                    other_path.joinpath(file_date) if args.by_date else other_path
+                )
                 if args.dry_run:
                     print(
-                        f"[Dry Run] Would move {filename.name} to {other_path.name} folder."
+                        f"[Dry Run] Would move {filename.name} to {
+                            other_path.name + os.sep + other_date_path.name
+                        } folder."
                     )
                 else:
                     try:
