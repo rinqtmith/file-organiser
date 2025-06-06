@@ -90,13 +90,15 @@ def main():
         )
         return
 
-    file_list = list(PATH.iterdir())
-
-    for filename in file_list:
-        if filename.is_file():
-            move_file_to_folder(filename, PATH, args.dry_run, args.by_date)
+    for file_to_check in PATH.iterdir():
+        if file_to_check.is_file():
+            move_file_to_folder(file_to_check, PATH, args.dry_run, args.by_date)
+        elif file_to_check.is_dir():
+            for item in file_to_check.iterdir():
+                if item.is_file():
+                    move_file_to_folder(item, file_to_check, args.dry_run, args.by_date)
         else:
-            print(f"Skipping {filename.name} as it is not a file.")
+            print(f"Skipping {file_to_check.name} as it is not a file or directory.")
 
 
 if __name__ == "__main__":
