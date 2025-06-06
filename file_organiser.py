@@ -80,6 +80,8 @@ def main():
                     print(
                         f"[Dry Run] Would move {filename.name} to {
                             other_path.name + os.sep + other_date_path.name
+                            if args.by_date
+                            else other_path.name
                         } folder."
                     )
                 else:
