@@ -60,6 +60,19 @@ def check_files(base_path, file_path, dry_run, by_date, recursive, r_all):
             print(f"Skipping {file_to_check.name} as recursive is not set.")
 
 
+def remove_empty_folders(path, dry_run):
+    for dirpath, dirnames, _ in os.walk(path, topdown=False):
+        for dirname in dirnames:
+            dir_to_check = Path(dirpath).joinpath(dirname)
+            if dry_run:
+                print(
+                    f"Checking folder: {dir_to_check.relative_to(path)} would be removed if empty."
+                )
+            if not any(dir_to_check.iterdir()):
+                if not dry_run:
+                    os.rmdir(dir_to_check)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Organise files in a directory")
     parser.add_argument(
@@ -109,6 +122,8 @@ def main():
     check_files(
         PATH, PATH, args.dry_run, args.by_date, args.recursive, args.recursive_all
     )
+    if args.recursive_all:
+        remove_empty_folders(PATH, args.dry_run)
 
 
 if __name__ == "__main__":
