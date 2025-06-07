@@ -8,7 +8,7 @@ from datetime import datetime
 from file_types_config import FILE_TYPES
 
 
-def move_file_to_folder(filename, file_path, dry_run, by_date):
+def move_file_to_folder(base_path, filename, file_path, dry_run, by_date):
     file_date = datetime.fromtimestamp(filename.stat().st_birthtime).date().isoformat()
     for file_type in FILE_TYPES:
         if filename.suffix.lower() in FILE_TYPES[file_type]:
@@ -18,7 +18,7 @@ def move_file_to_folder(filename, file_path, dry_run, by_date):
             )
             if dry_run:
                 print(
-                    f"[Dry Run] Would move {filename.name} to {folder_date_path.relative_to(file_path)} folder."
+                    f"[Dry Run] Would move {filename.name} to {folder_date_path.relative_to(base_path)} folder."
                 )
             else:
                 try:
@@ -32,7 +32,7 @@ def move_file_to_folder(filename, file_path, dry_run, by_date):
         other_date_path = other_path.joinpath(file_date) if by_date else other_path
         if dry_run:
             print(
-                f"[Dry Run] Would move {filename.name} to {other_date_path.relative_to(file_path)} folder."
+                f"[Dry Run] Would move {filename.name} to {other_date_path.relative_to(base_path)} folder."
             )
         else:
             try:
@@ -42,12 +42,12 @@ def move_file_to_folder(filename, file_path, dry_run, by_date):
             shutil.move(filename, other_date_path.joinpath(filename.name))
 
 
-def check_files(file_path, dry_run, by_date, recursive):
+def check_files(base_path, file_path, dry_run, by_date, recursive):
     for file_to_check in file_path.iterdir():
         if file_to_check.is_file():
-            move_file_to_folder(file_to_check, file_path, dry_run, by_date)
+            move_file_to_folder(base_path, file_to_check, file_path, dry_run, by_date)
         elif file_to_check.is_dir() and recursive:
-            check_files(file_to_check, dry_run, by_date, recursive)
+            check_files(base_path, file_to_check, dry_run, by_date, recursive)
         else:
             print(f"Skipping {file_to_check.name} as recursive is not set.")
 
@@ -98,7 +98,7 @@ def main():
         )
         return
 
-    check_files(PATH, args.dry_run, args.by_date, args.recursive)
+    check_files(PATH, PATH, args.dry_run, args.by_date, args.recursive)
 
 
 if __name__ == "__main__":
