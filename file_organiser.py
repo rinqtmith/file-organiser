@@ -18,11 +18,7 @@ def move_file_to_folder(filename, file_path, dry_run, by_date):
             )
             if dry_run:
                 print(
-                    f"[Dry Run] Would move {filename.name} to {
-                        folder_path.name + os.sep + folder_date_path.name
-                        if by_date
-                        else folder_path.name
-                    } folder."
+                    f"[Dry Run] Would move {filename.name} to {folder_date_path.relative_to(file_path)} folder."
                 )
             else:
                 try:
@@ -36,11 +32,7 @@ def move_file_to_folder(filename, file_path, dry_run, by_date):
         other_date_path = other_path.joinpath(file_date) if by_date else other_path
         if dry_run:
             print(
-                f"[Dry Run] Would move {filename.name} to {
-                    other_path.name + os.sep + other_date_path.name
-                    if by_date
-                    else other_path.name
-                } folder."
+                f"[Dry Run] Would move {filename.name} to {other_date_path.relative_to(file_path)} folder."
             )
         else:
             try:
