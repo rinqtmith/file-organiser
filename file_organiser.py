@@ -8,10 +8,16 @@ from datetime import datetime
 from file_types_config import FILE_TYPES
 
 
-def move_file_to_folder(base_path, filename, file_path, dry_run, by_date, r_all):
+def move_file_to_folder(
+    base_path, filename, file_path, dry_run, by_date, r_all, verbose
+):
+    if verbose:
+        print(f"Processing file: {filename.name}")
     file_date = datetime.fromtimestamp(filename.stat().st_birthtime).date().isoformat()
     for file_type in FILE_TYPES:
         if filename.suffix.lower() in FILE_TYPES[file_type]:
+            if verbose:
+                print(f"File type matched: {file_type} for {filename.name}")
             folder_path = (
                 base_path.joinpath(file_type)
                 if r_all
@@ -27,8 +33,16 @@ def move_file_to_folder(base_path, filename, file_path, dry_run, by_date, r_all)
             else:
                 try:
                     os.makedirs(folder_date_path)
+                    if verbose:
+                        print(
+                            f"Created folder: {folder_date_path.relative_to(base_path)}"
+                        )
                 except FileExistsError:
                     pass
+                if verbose:
+                    print(
+                        f"Moving {filename.name} to {folder_date_path.relative_to(base_path)}"
+                    )
                 shutil.move(filename, folder_date_path.joinpath(filename.name))
             break
     else:
@@ -43,26 +57,46 @@ def move_file_to_folder(base_path, filename, file_path, dry_run, by_date, r_all)
         else:
             try:
                 os.makedirs(other_date_path)
+                if verbose:
+                    print(f"Created folder: {other_date_path.relative_to(base_path)}")
             except FileExistsError:
                 pass
+            if verbose:
+                print(
+                    f"Moving {filename.name} to {other_date_path.relative_to(base_path)}"
+                )
             shutil.move(filename, other_date_path.joinpath(filename.name))
 
 
-def check_files(base_path, file_path, dry_run, by_date, recursive, r_all):
+def check_files(base_path, file_path, dry_run, by_date, recursive, r_all, verbose):
+    if verbose:
+        print(f"Checking files in: {file_path}")
     for file_to_check in file_path.iterdir():
         if file_to_check.is_file():
+            if verbose:
+                print(f"Found file: {file_to_check.name}")
             move_file_to_folder(
-                base_path, file_to_check, file_path, dry_run, by_date, r_all
+                base_path, file_to_check, file_path, dry_run, by_date, r_all, verbose
             )
         elif file_to_check.is_dir() and recursive:
-            check_files(base_path, file_to_check, dry_run, by_date, recursive, r_all)
+            if verbose:
+                print(f"Found directory: {file_to_check.name}")
+            check_files(
+                base_path, file_to_check, dry_run, by_date, recursive, r_all, verbose
+            )
         else:
             print(f"Skipping {file_to_check.name} as recursive is not set.")
 
 
-def remove_empty_folders(path, dry_run):
+def remove_empty_folders(path, dry_run, verbose):
+    if verbose:
+        print(f"Removing empty folders in: {path}")
     for dirpath, dirnames, _ in os.walk(path, topdown=False):
+        if verbose:
+            print(f"Checking directory: {dirpath}")
         for dirname in dirnames:
+            if verbose:
+                print(f"Checking subdirectory: {dirname}")
             dir_to_check = Path(dirpath).joinpath(dirname)
             if dry_run:
                 print(
@@ -70,6 +104,8 @@ def remove_empty_folders(path, dry_run):
                 )
             if not any(dir_to_check.iterdir()):
                 if not dry_run:
+                    if verbose:
+                        print(f"Removing empty folder: {dir_to_check}")
                     os.rmdir(dir_to_check)
 
 
@@ -95,6 +131,9 @@ def main():
         help="Organise all files recursively",
         action="store_true",
     )
+    parser.add_argument(
+        "-v", "--verbose", help="Enable verbose output", action="store_true"
+    )
     args = parser.parse_args()
     PATH = Path(args.path).resolve()
     cwd = Path.cwd()
@@ -119,11 +158,24 @@ def main():
         )
         return
 
+    if args.verbose:
+        print(f"Organising files in: {PATH}")
+        print(f"with dry run: {args.dry_run}")
+        print(f"by date: {args.by_date}")
+        print(f"recursive: {args.recursive}")
+        print(f"recursive all: {args.recursive_all}")
+        print(f"Current working directory: {cwd}")
     check_files(
-        PATH, PATH, args.dry_run, args.by_date, args.recursive, args.recursive_all
+        PATH,
+        PATH,
+        args.dry_run,
+        args.by_date,
+        args.recursive,
+        args.recursive_all,
+        args.verbose,
     )
     if args.recursive_all:
-        remove_empty_folders(PATH, args.dry_run)
+        remove_empty_folders(PATH, args.dry_run, args.verbose)
 
 
 if __name__ == "__main__":
