@@ -1,37 +1,12 @@
-import argparse
-
 from pathlib import Path
 
+from src.arg_parser import parse_args
 from src.check_files import check_files
 from src.remove_empty_folders import remove_empty_folders
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Organise files in a directory")
-    parser.add_argument(
-        "path", help="Path to the directory to organise files in", type=str
-    )
-    parser.add_argument(
-        "--dry-run",
-        help="Perform a dry run without making changes",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-b", "--by-date", help="Organise files by date", action="store_true"
-    )
-    parser.add_argument(
-        "-r", "--recursive", help="Organise files recursively", action="store_true"
-    )
-    parser.add_argument(
-        "-a",
-        "--recursive-all",
-        help="Organise all files recursively",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-v", "--verbose", help="Enable verbose output", action="store_true"
-    )
-    args = parser.parse_args()
+    args = parse_args()
     PATH = Path(args.path).resolve()
     cwd = Path.cwd()
 
