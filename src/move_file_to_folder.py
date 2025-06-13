@@ -9,6 +9,22 @@ from file_types_config import FILE_TYPES
 def move_file_to_folder(
     base_path, filename, file_path, dry_run, by_date, r_all, verbose
 ):
+    """
+    Move a file to an appropriate folder based on its type and date.
+
+    Args:
+        base_path (Path): The root directory for organising files.
+        filename (Path): The file to be moved.
+        file_path (Path): The current directory of the file.
+        dry_run (bool): If True, only print actions without making changes.
+        by_date (bool): If True, organise files into date-based subfolders.
+        r_all (bool): If True, use base_path for all moves; otherwise, use file_path.
+        verbose (bool): If True, print detailed output.
+
+    The function determines the file type and moves the file into a corresponding
+    folder (and optionally a date subfolder). If the file type is not recognised,
+    it is moved to an "Others" folder. Handles folder creation and supports dry run mode.
+    """
     if verbose:
         print(f"Processing file: {filename.name}")
     file_date = datetime.fromtimestamp(filename.stat().st_birthtime).date().isoformat()

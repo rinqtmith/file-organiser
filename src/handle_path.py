@@ -2,6 +2,20 @@ import sys
 
 
 def handle_path(PATH, cwd):
+    """
+    Validate the provided path and its relationship to the current working directory.
+
+    Args:
+        PATH (Path): The path to validate.
+        cwd (Path): The current working directory.
+
+    Checks:
+        - PATH exists and is a directory.
+        - PATH is not relative to cwd.
+        - cwd is not a subdirectory of PATH.
+
+    Exits the program with an error message if any check fails.
+    """
     if not PATH.exists():
         print(f"Path '{PATH}' does not exist.")
         sys.exit(1)
