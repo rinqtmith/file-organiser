@@ -2,6 +2,7 @@ from pathlib import Path
 
 from src.arg_parser import parse_args
 from src.check_files import check_files
+from src.handle_path import handle_path
 from src.remove_empty_folders import remove_empty_folders
 
 
@@ -10,25 +11,7 @@ def main():
     PATH = Path(args.path).resolve()
     cwd = Path.cwd()
 
-    if not PATH.exists():
-        print(f"Path '{PATH}' does not exist.")
-        return
-
-    if not PATH.is_dir():
-        print(f"Path '{PATH}' is not a directory.")
-        return
-
-    if PATH.is_relative_to(cwd):
-        print(
-            "Warning: The provided path is relative to the current working directory."
-        )
-        return
-
-    if cwd.is_relative_to(PATH):
-        print(
-            "Warning: The current working directory is a subdirectory of the provided path."
-        )
-        return
+    handle_path(PATH, cwd)
 
     if args.verbose:
         print(f"Organising files in: {PATH}")
