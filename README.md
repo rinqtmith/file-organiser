@@ -21,7 +21,7 @@ structured subfolders.
 ## 🛠️ Tech Stack
 
 - **Language:** Python 3
-- **Modules:** `os`, `shutil`, `datetime`, `argparse`, `mimetypes`
+- **Modules:** `os`, `shutil`, `datetime`, `argparse`
 
 ## 📦 Installation
 
@@ -29,12 +29,17 @@ structured subfolders.
 
 ```bash
 file-organiser/
-├── file_organiser.py          # Main script
-├── test_file_organiser.py     # Unit tests
-├── file_types_config.py       # Optional: file type mappings
-├── README.md                  # Documentation
-├── .gitignore                 # Git config
-└── examples/                  # Sample inputs or config (optional)
+├── src/
+│   ├── arg_parser.py             # CLI argument parsing
+│   ├── check_files.py            # Validates file conditions
+│   ├── handle_path.py            # Resolves and sanitizes paths
+│   ├── move_file_to_folder.py    # Moves files into categorized folders
+│   ├── remove_empty_folders.py   # Deletes empty directories
+├── file_types_config.py          # File extension-category mapping
+├── main.py                       # Entry point of the program
+├── README.md
+├── LICENSE
+└── .gitignore
 ```
 
 ### Setup
@@ -53,23 +58,30 @@ Install dependencies (only standard libraries used; no installation required).
 Basic usage:
 
 ```bash
-python3 file_organiser.py --path /path/to/target/directory
+python3 main.py [-h] [--dry-run] [-b] [-r] [-a] [-v] path
 ```
+
+### Positional arguments
+
+| Argument | Description                             |
+| -------- | --------------------------------------- |
+| `path`   | Path to the directory to organize files |
 
 ### Optional arguments
 
-| Flag          | Description                             |
-| ------------- | --------------------------------------- |
-| `--path`      | Path to the target directory (required) |
-| `--by-date`   | Organize by creation/modification date  |
-| `--dry-run`   | Preview actions without moving files    |
-| `--recursive` | Scan subdirectories recursively         |
-| `--verbose`   | Print details of every file action      |
+| Flag                    | Description                                |
+| ----------------------- | ------------------------------------------ |
+| `-h`, `--help`          | Show this help message and exit            |
+| `--dry-run`             | Perform a dry run without making changes   |
+| `-b`, `--by-date`       | Organize files by modification date        |
+| `-r`, `--recursive`     | Organize files recursively                 |
+| `-a`, `--recursive-all` | Organize all files recursively (max depth) |
+| `-v`, `--verbose`       | Enable verbose output for logging          |
 
 ### Example
 
 ```bash
-python file_organiser.py --path ~/Downloads --by-date --verbose
+python main.py ~/Downloads --by-date --verbose
 ```
 
 ## 📂 Folder Mapping Logic
@@ -82,8 +94,9 @@ FILE_TYPES = {
     "Documents": [".pdf", ".docx", ".txt", ".md"],
     "Spreadsheets": [".xls", ".xlsx", ".csv"],
     "Archives": [".zip", ".rar", ".tar", ".gz"],
+    "Videos": [".mp4", ".mov"],
+    "Audio": [".mp3", ".wav"],
     "Executables": [".exe", ".sh", ".bat"],
-    "Others": []
 }
 ```
 
